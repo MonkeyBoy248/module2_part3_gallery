@@ -88,7 +88,7 @@ function createPictureTemplate (pictures: GalleryData): void {
     const imageWrapper = picture.children[0];
     const image = imageWrapper.querySelector('.gallery__img') as HTMLElement;
     
-    image.setAttribute('src', `../public/api_images/${object}`);
+    image.setAttribute('src', `${object}`);
     galleryPhotos.insertAdjacentElement('beforeend', imageWrapper);
   }
 }
