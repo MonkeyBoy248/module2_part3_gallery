@@ -2,7 +2,7 @@ import * as express from 'express';
 import { Request, Response } from "express";
 import { Controller } from "../interfaces/controller";
 import { GalleryObject } from "../interfaces/gallery_object";
-import { Pictures } from "../utils/galleryPictures";
+import { Pictures } from "../utils/gallery_pictures";
 import { checkAuthorizationHeader } from "../middleware/authentication";
 
 export class GalleryController implements Controller {

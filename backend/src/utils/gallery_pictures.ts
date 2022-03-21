@@ -1,14 +1,17 @@
 import * as fs from 'fs';
-import { Gallery } from './galleryInterface';
-
 
 export class Pictures {
-  private static API_IMAGES_PATH: string = '/Users/user/projects/module2/module2_part2_gallery/resources/api_images';
-  private static PICTURES_PER_PAGE: number = 4;
+  public static API_IMAGES_PATH: string = '/Users/user/projects/module2/module2_part3_gallery/backend/public/api_images';
+  public static PICTURES_PER_PAGE: number = 4;
 
   static async getPictures () {
     const fileNames = await fs.promises.readdir(Pictures.API_IMAGES_PATH);
-    
+
+    for (let i = 0; i < fileNames.length; i++) {
+      fileNames[i] = `http://localhost:8000/api_images/${fileNames[i]}`;
+    }
+
+    console.log(fileNames);
     return fileNames;
   }
   
@@ -24,18 +27,6 @@ export class Pictures {
   
     return totalPages;
   }
-  
-  static createGalleryResponse (objects: string[], total: number, page: number): Gallery {
-    const objectsTraversePattern = objects.slice((page - 1) * Pictures.PICTURES_PER_PAGE, page * Pictures.PICTURES_PER_PAGE);
-    const response: Gallery = {
-      objects: objectsTraversePattern,
-      total,
-      page
-    }
-  
-    return response;
-  }
-
 }
 
 
