@@ -1,9 +1,9 @@
 import * as express from 'express';
 import { Request, Response } from "express";
 import { Controller } from "../interfaces/controller";
-import { authorized_users } from "../authorizedUsersList";
+import { authorized_users } from "../authorized_users_list";
 import { User } from '../interfaces/user';
-import {AuthenticationErrorMessage, TokenObject} from "../interfaces/token";
+import {AuthenticationErrorMessage, TokenObject} from "../interfaces/token_object";
 
 export class AuthenticationController implements Controller {
   public path = '/authentication';

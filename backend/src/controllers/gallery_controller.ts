@@ -1,8 +1,9 @@
 import * as express from 'express';
-import {Request, Response} from "express";
-import {Controller} from "../interfaces/controller";
-import {Gallery} from "../interfaces/gallery";
-import {Pictures} from "../utils/galleryPictures";
+import { Request, Response } from "express";
+import { Controller } from "../interfaces/controller";
+import { GalleryObject } from "../interfaces/gallery_object";
+import { Pictures } from "../utils/galleryPictures";
+import { checkAuthorizationHeader } from "../middleware/authentication";
 
 export class GalleryController implements Controller {
   public path = '/gallery';
@@ -13,13 +14,13 @@ export class GalleryController implements Controller {
   }
 
   public setRoute () {
-    return this.router.get(this.path, this.sendGalleryResponse);
+    return this.router.get(this.path, checkAuthorizationHeader, this.sendGalleryResponse);
   }
 
-  createGalleryResponseObject = (objects: string[], total: number, page: string ): Gallery => {
+  createGalleryResponseObject = (objects: string[], total: number, page: string ): GalleryObject => {
     const pageNumber = Number(page);
     const objectsTraversePattern = objects.slice((pageNumber - 1) * Pictures.PICTURES_PER_PAGE, pageNumber * Pictures.PICTURES_PER_PAGE);
-    const response: Gallery = {
+    const response: GalleryObject = {
       objects: objectsTraversePattern,
       total,
       page: pageNumber
