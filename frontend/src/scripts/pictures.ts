@@ -29,9 +29,15 @@ async function getPicturesData (url: string): Promise<void>{
           Authorization: tokenProperty,
         },
       })
-      
+
+      console.log(response.status);
+
       if (response.status === 403) {
         throw new TokenError();
+      }
+
+      if (response.status === 404) {
+        throw new InvalidPageError();
       }
       
       const data: GalleryData = await response.json();
@@ -40,7 +46,7 @@ async function getPicturesData (url: string): Promise<void>{
       createLinksTemplate(data.total);
       setPageNumber();
     } catch (err){
-        if (err instanceof SyntaxError) {
+        if (err instanceof InvalidPageError) {
           const nonexistentPageNumber = url.slice(url.indexOf('=') + 1);
 
           createErrorMessageTemplate(
@@ -68,9 +74,9 @@ function redirectToTheTargetPage (e: Event) {
   ListenerRemover.removeEventListeners(galleryEventsArray);
 
   if (target.getAttribute('error-type') === 'wrong-page-number') {
-    window.location.replace('index.html?page=1')
+    window.location.replace('gallery.html?page=1')
   } else {
-    window.location.replace(`authentication.html?currentPage=${currentUrl.searchParams.get('page')}`);
+    window.location.replace(`index.html?currentPage=${currentUrl.searchParams.get('page')}`);
   }
 }
 
@@ -82,7 +88,7 @@ function createPictureTemplate (pictures: GalleryData): void {
     const imageWrapper = picture.children[0];
     const image = imageWrapper.querySelector('.gallery__img') as HTMLElement;
     
-    image.setAttribute('src', `resources/api_images/${object}`);
+    image.setAttribute('src', `../public/api_images/${object}`);
     galleryPhotos.insertAdjacentElement('beforeend', imageWrapper);
   }
 }
