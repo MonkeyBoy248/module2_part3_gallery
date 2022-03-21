@@ -2,5 +2,8 @@ node_modules
 .vs_code/
 .idea/
 build/
+dist/
+backend/views/modules
+backend/views/scripts
 .editorconfig
-.env
+backend/.env
