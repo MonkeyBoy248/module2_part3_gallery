@@ -4,7 +4,7 @@ import { AuthenticationController } from "./controllers/authentication_controlle
 import { GalleryController } from "./controllers/gallery_controller";
 import dotenv from 'dotenv';
 import path from "path";
-import {nonexistentPageHandler} from "./middleware/404_handler";
+import { nonexistentPageHandler } from "./middleware/404_handler";
 
 dotenv.config();
 
@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use('/',
   express.static(path.join(__dirname, '..', 'backend', 'views', 'pages')),
   express.static(path.join(__dirname, '..', 'backend', 'views')),
-  express.static(path.join(__dirname, '..', 'backend', 'public'))
+  express.static(path.join(__dirname, '..', 'backend', 'public')),
 )
 
 app.use(authenticationController.router);
