@@ -1,14 +1,20 @@
 const galleryPhotos = document.querySelector('.gallery__photos') as HTMLElement;
+const headerFilesContainer = document.querySelector('.header__files-container') as HTMLElement;
 const galleryTemplate = document.querySelector('.gallery__template') as HTMLTemplateElement;
 const pagesLinksList = document.querySelector('.gallery__links-list') as HTMLElement;
 const galleryErrorMessage = document.querySelector('.gallery__error-message') as HTMLElement;
 const galleryErrorContainer = document.querySelector('.gallery__error') as HTMLElement;
 const galleryPopup = document.querySelector('.gallery__error-pop-up') as HTMLElement;
 const galleryLinkTemplate = document.querySelector('.gallery__link-template') as HTMLTemplateElement;
+const galleryUploadForm = document.querySelector('.header__upload-form') as HTMLFormElement;
+const galleryUploadLabel = galleryUploadForm.querySelector('.header__upload-label') as HTMLElement;
+const galleryUploadInput = galleryUploadForm.querySelector('.header__upload-input') as HTMLInputElement;
 const galleryEventsArray: CustomEventListener[] = [
   {target: document, type: 'DOMContentLoaded', handler: getCurrentPageImages},
   {target: pagesLinksList, type: 'click', handler: changeCurrentPage},
-  {target: galleryErrorContainer, type: 'click', handler: redirectToTheTargetPage}
+  {target: galleryErrorContainer, type: 'click', handler: redirectToTheTargetPage},
+  {target: galleryUploadForm, type: 'submit', handler: uploadUserFile},
+  {target: galleryUploadInput, type: 'change', handler: showSelectedFilePath}
 ]
 
 interface GalleryData {
@@ -67,6 +73,50 @@ async function getPicturesData (url: string): Promise<void>{
   }
 }
 
+function validateFileType (file: File) {
+  const fileTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+  if (!fileTypes.includes(file.type)) {
+    return false;
+  }
+
+  return true;
+}
+
+async function sendUserPicture (url: string) {
+  const tokenObject = Token.getToken();
+  const tokenProperty = tokenObject?.token;
+  const data = new FormData();
+
+  const file = galleryUploadInput.files![0];
+
+  if (validateFileType(file)) {
+    data.append('file', file);
+    console.log('data to fetch', data.getAll('file'));
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': tokenProperty
+      },
+      body: data
+    })
+
+
+    const responseStatus = response.status;
+
+    if (responseStatus !== 200) {
+      throw new ImageUploadError();
+    }
+
+    await getPicturesData(`${galleryServerUrl}?page=${currentUrl.searchParams.get('page')}`);
+  } catch (err) {
+    console.log('Failed');
+  }
+}
+
 function redirectToTheTargetPage (e: Event) {
   e.preventDefault();
   const target = e.target as HTMLElement;
@@ -88,7 +138,7 @@ function createPictureTemplate (pictures: GalleryData): void {
     const imageWrapper = picture.children[0];
     const image = imageWrapper.querySelector('.gallery__img') as HTMLElement;
     
-    image.setAttribute('src', `${object}`);
+    image.setAttribute('src', `http://localhost:8000/api_images/${object}`);
     galleryPhotos.insertAdjacentElement('beforeend', imageWrapper);
   }
 }
@@ -120,10 +170,44 @@ function createErrorMessageTemplate (message: string, errType: string, targetPag
   galleryErrorContainer.append(galleryErrorRedirectLink);
 
   showMessage(message);
-} 
+}
+
+async function uploadUserFile (e: Event) {
+  e.preventDefault();
+  const selectedFiles = galleryUploadInput.files;
+  const file = galleryUploadInput.files![0];
+
+  if (selectedFiles!.length === 0) {
+    galleryUploadLabel.textContent = 'No file selected';
+    return false;
+  }
+
+  await sendUserPicture(galleryServerUrl);
+
+  headerFilesContainer.innerHTML = '';
+}
+
+function showSelectedFilePath (e: Event) {
+  const selectedFiles = galleryUploadInput.files;
+
+  if (selectedFiles) {
+    headerFilesContainer.innerHTML = '';
+    galleryUploadLabel.textContent = 'Select a file';
+
+    const file = galleryUploadInput.files![0];
+
+      if (validateFileType(file)) {
+        const listItem = document.createElement('div') as HTMLElement;
+        listItem.className = 'header__list-item';
+        listItem.textContent = file.name;
+
+        headerFilesContainer.append(listItem);
+      }
+    }
+}
 
 function setNewUrl (params: URLSearchParams | string): void {
-  window.location.href = window.location.origin + window.location.pathname + `?page=${params}`;
+  window.location.href = `${protocol}://${hostName}:${port}/${galleryUrl}?page=${params}`;
 }
 
 function showMessage (text: string): void {
@@ -200,6 +284,8 @@ function changeCurrentPage (e: Event): void {
 document.addEventListener('DOMContentLoaded', getCurrentPageImages);
 pagesLinksList.addEventListener('click', changeCurrentPage);
 galleryErrorContainer.addEventListener('click', redirectToTheTargetPage);
+galleryUploadForm.addEventListener('submit', uploadUserFile);
+galleryUploadInput.addEventListener('change', showSelectedFilePath);
 
 setInterval(() => {
   Token.deleteToken();
