@@ -1,7 +1,8 @@
 import * as fs from 'fs';
+import path from "path";
 
 export class Pictures {
-  public static API_IMAGES_PATH: string = '/Users/user/projects/module2/module2_part3_gallery/backend/public/api_images';
+  public static API_IMAGES_PATH: string = path.join(__dirname, '..', 'public', 'api_images');
   public static PICTURES_PER_PAGE: number = 4;
 
   static async getPictures () {
