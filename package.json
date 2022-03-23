@@ -9,5 +9,11 @@
     "start": "cd frontend && tsc && cd .. && cd backend && tsc && nodemon dist/server.js"
   },
   "author": "Kirill Temnyi",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "multer": "^1.4.4",
+    "nodemon": "^2.0.15"
+  }
 }
