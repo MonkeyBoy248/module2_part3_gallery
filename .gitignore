@@ -6,4 +6,4 @@ dist/
 backend/views/modules
 backend/views/scripts
 .editorconfig
-backend/.env
+.env
