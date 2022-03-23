@@ -1,9 +1,11 @@
 import * as express from 'express';
-import { Request, Response } from "express";
+import {NextFunction, Request, Response} from "express";
 import { Controller } from "../interfaces/controller";
 import { GalleryObject } from "../interfaces/gallery_object";
 import { Pictures } from "../utils/gallery_pictures";
 import { checkAuthorizationHeader } from "../middleware/authentication";
+import { upload } from "../middleware/picture_upload";
+import { renameFile } from "../utils/filename_format";
 
 export class GalleryController implements Controller {
   public path = '/gallery';
@@ -14,12 +16,23 @@ export class GalleryController implements Controller {
   }
 
   public setRoute () {
-    return this.router.get(this.path, checkAuthorizationHeader, this.sendGalleryResponse);
+    return this.router.route(this.path)
+      .get(checkAuthorizationHeader, this.sendGalleryResponse)
+      .post(checkAuthorizationHeader, upload.single('file'), this.uploadUserPicture);
+  }
+
+  sortFileNames = (objects: string[]) => {
+    const pattern = /\d+/g;
+
+    return objects.sort((first, second) => {
+      return Number(first.match(pattern)) - Number(second.match(pattern))
+    })
   }
 
   createGalleryResponseObject = (objects: string[], total: number, page: string ): GalleryObject => {
     const pageNumber = Number(page);
-    const objectsTraversePattern = objects.slice((pageNumber - 1) * Pictures.PICTURES_PER_PAGE, pageNumber * Pictures.PICTURES_PER_PAGE);
+    const sortedObjects = this.sortFileNames(objects);
+    const objectsTraversePattern = sortedObjects.slice((pageNumber - 1) * Pictures.PICTURES_PER_PAGE, pageNumber * Pictures.PICTURES_PER_PAGE);
     const response: GalleryObject = {
       objects: objectsTraversePattern,
       total,
@@ -46,5 +59,9 @@ export class GalleryController implements Controller {
     }
 
     res.status(200).json(responseObject);
+  }
+
+  uploadUserPicture = async (req: Request, res: Response, next: NextFunction) => {
+    await renameFile(req, res);
   }
 }
