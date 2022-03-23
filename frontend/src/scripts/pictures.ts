@@ -90,10 +90,12 @@ async function sendUserPicture (url: string) {
 
   const file = galleryUploadInput.files![0];
 
-  if (validateFileType(file)) {
-    data.append('file', file);
-    console.log('data to fetch', data.getAll('file'));
+  if (!validateFileType(file)) {
+    return false;
   }
+
+  data.append('file', file);
+  console.log('data to fetch', data.getAll('file'));
 
   try {
     const response = await fetch(url, {
@@ -191,12 +193,13 @@ function showSelectedFilePath (e: Event) {
   const selectedFiles = galleryUploadInput.files;
 
   if (selectedFiles) {
-    headerFilesContainer.innerHTML = '';
     galleryUploadLabel.textContent = 'Select a file';
 
     const file = galleryUploadInput.files![0];
 
       if (validateFileType(file)) {
+        headerFilesContainer.innerHTML = '';
+
         const listItem = document.createElement('div') as HTMLElement;
         listItem.className = 'header__list-item';
         listItem.textContent = file.name;
