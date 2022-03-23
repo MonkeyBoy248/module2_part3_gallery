@@ -6,15 +6,15 @@ export class Pictures {
 
   static async getPictures () {
     const fileNames = await fs.promises.readdir(Pictures.API_IMAGES_PATH);
-
-    for (let i = 0; i < fileNames.length; i++) {
-      fileNames[i] = `http://localhost:8000/api_images/${fileNames[i]}`;
-    }
-
-    console.log(fileNames);
     return fileNames;
   }
-  
+
+  static async getPicturesLength () {
+    const pictures = await this.getPictures();
+
+    return pictures.length;
+  }
+
   static countTotalPagesAmount (pictures: string[]): number {
     const picturesTotal = pictures.length;
     let totalPages: number;
