@@ -25,9 +25,9 @@ function redirectToTheGalleryPage () {
   const currentPage = currentUrl.searchParams.get('currentPage');
 
   if (!currentPage) {
-    window.location.replace(`http://localhost:8000/${galleryUrl}?page=1`)
+    window.location.replace(`${galleryUrl}?page=1`)
   } else {
-    window.location.replace(`http://localhost:8000/${galleryUrl}?page=${currentPage}`)
+    window.location.replace(`${galleryUrl}?page=${currentPage}`)
   }
 }
 
@@ -83,10 +83,19 @@ class InvalidPageError extends Error {
   }
 }
 
+class ImageUploadError extends Error {
+  constructor(message? : string) {
+    super(message);
+    this.name = 'ImageUploadError';
+  }
+}
+
 interface User {
   email: string;
   password: string;
 }
+
+
 
 
 
