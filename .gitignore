@@ -7,3 +7,4 @@ backend/views/modules
 backend/views/scripts
 .editorconfig
 .env
+logs/
