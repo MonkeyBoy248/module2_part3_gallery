@@ -15,13 +15,13 @@ export class GalleryController implements Controller {
     this.setRoute();
   }
 
-  public setRoute () {
+  setRoute () {
     return this.router.route(this.path)
       .get(checkAuthorizationHeader, this.sendGalleryResponse)
       .post(checkAuthorizationHeader, upload.single('file'), this.uploadUserPicture);
   }
 
-  sortFileNames = (objects: string[]) => {
+  private sortFileNames = (objects: string[]) => {
     const pattern = /\d+/g;
 
     return objects.sort((first, second) => {
@@ -29,7 +29,7 @@ export class GalleryController implements Controller {
     })
   }
 
-  createGalleryResponseObject = (objects: string[], total: number, page: string ): GalleryObject => {
+  private createGalleryResponseObject = (objects: string[], total: number, page: string ): GalleryObject => {
     const pageNumber = Number(page);
     const sortedObjects = this.sortFileNames(objects);
     const objectsTraversePattern = sortedObjects.slice((pageNumber - 1) * Pictures.PICTURES_PER_PAGE, pageNumber * Pictures.PICTURES_PER_PAGE);
@@ -42,26 +42,26 @@ export class GalleryController implements Controller {
     return response;
   }
 
-  sendGalleryResponse = async (req: Request, res: Response) => {
+  private sendGalleryResponse = async (req: Request, res: Response, next: NextFunction) => {
     const pictureNames = await Pictures.getPictures();
-    const totalPagesAmount = Pictures.countTotalPagesAmount(pictureNames)
+    const totalPagesAmount = Pictures.countTotalPagesAmount(pictureNames!)
     const pageNumber = req.query.page ? String(req.query.page) : '1';
-    const responseObject = this.createGalleryResponseObject(pictureNames, totalPagesAmount, pageNumber);
+    const responseObject = this.createGalleryResponseObject(pictureNames!, totalPagesAmount, pageNumber);
 
     if (req.headers.authorization !== 'token') {
-      res.status(403).send();
+      res.sendStatus(403);
       return;
     }
 
     if (Number(pageNumber) <= 0 || Number(pageNumber) > totalPagesAmount) {
-      res.status(404).send();
+      res.sendStatus(404);
       return;
     }
 
     res.status(200).json(responseObject);
   }
 
-  uploadUserPicture = async (req: Request, res: Response, next: NextFunction) => {
+  private uploadUserPicture = async (req: Request, res: Response, next: NextFunction) => {
     await renameFile(req, res);
   }
 }

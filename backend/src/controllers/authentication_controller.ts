@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { Request, Response } from "express";
+import {NextFunction, Request, Response} from "express";
 import { Controller } from "../interfaces/controller";
 import { authorized_users } from "../authorized_users_list";
 import { User } from '../interfaces/user';
@@ -19,7 +19,7 @@ export class AuthenticationController implements Controller {
     return this.router.post(this.path, this.sendAuthenticationResponse);
   }
 
-  isThisCorrectUser = (user: User): boolean => {
+  private isThisCorrectUser = (user: User): boolean => {
     if (!authorized_users[user.email]) {
       return false;
     }
@@ -31,7 +31,7 @@ export class AuthenticationController implements Controller {
     return true;
   }
 
-  sendAuthenticationResponse = (req: Request, res: Response) => {
+  private sendAuthenticationResponse = (req: Request, res: Response, next: NextFunction) => {
     const userData: User = {
       email: req.body.email,
       password: req.body.password,
