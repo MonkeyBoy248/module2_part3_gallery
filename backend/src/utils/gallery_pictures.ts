@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import path from "path";
-import {setDateFormat, writeLogs} from "./logs_file";
+import {setDateFormat, writeLogs} from "./log_file";
 import {isNodeError} from "./error_type_check";
 
 export class Pictures {
