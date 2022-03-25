@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node backend/src/server.ts",
-    "copy:resources": "cp -r backend/public build/backend/public",
+    "copy:resources": "cp -r backend/public build/backend",
     "copy:pages": "cd backend/ && cp -r ./views ../build/backend",
     "rm-build:backend": "cd backend/ && rm -R build",
     "rm-build": "npm run rm-build:frontend && npm run rm-build:backend",
