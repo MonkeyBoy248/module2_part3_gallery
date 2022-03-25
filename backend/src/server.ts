@@ -5,25 +5,31 @@ import { GalleryController } from "./controllers/gallery_controller";
 import dotenv from 'dotenv';
 import path from "path";
 import { nonexistentPageHandler } from "./middleware/404_handler";
+import { Logger } from "./middleware/logger";
 
 dotenv.config();
 
 const app = express();
 const authenticationController = new AuthenticationController();
 const galleryController = new GalleryController();
+const logger = new Logger();
 const port = process.env.PORT;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.use('/',
-  express.static(path.join(__dirname, '..', 'backend', 'views', 'pages')),
-  express.static(path.join(__dirname, '..', 'backend', 'views')),
-  express.static(path.join(__dirname, '..', 'backend', 'public')),
-)
+app.use(logger.writeLogs);
 
 app.use(authenticationController.router);
 app.use(galleryController.router);
+
+app.use('/',
+  express.static(path.join(__dirname, '..', 'views', 'pages')),
+  express.static(path.join(__dirname, '..', 'views')),
+  express.static(path.join(__dirname, '..', 'public')),
+)
+
+console.log(path.join(__dirname, '..', '..', 'views', 'pages'));
 
 app.use(nonexistentPageHandler);
 
