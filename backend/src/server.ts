@@ -13,7 +13,7 @@ const app = express();
 const authenticationController = new AuthenticationController();
 const galleryController = new GalleryController();
 const logger = new Logger();
-const port = process.env.PORT;
+const port = process.env.PORT || 8000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -31,5 +31,5 @@ app.use('/',
 
 app.use(nonexistentPageHandler);
 
-app.listen(port || 8000, () => console.log(`Server is running on port ${port}.
+app.listen(port, () => console.log(`Server is running on port ${port}.
 ${process.env.PROTOCOL}://${process.env.HOSTANME}:${process.env.PORT}`));
