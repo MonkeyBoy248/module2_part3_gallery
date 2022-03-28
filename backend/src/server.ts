@@ -29,8 +29,6 @@ app.use('/',
   express.static(path.join(__dirname, '..', 'public')),
 )
 
-console.log(path.join(__dirname, '..', '..', 'views', 'pages'));
-
 app.use(nonexistentPageHandler);
 
 app.listen(port || 8000, () => console.log(`Server is running on port ${port}.
