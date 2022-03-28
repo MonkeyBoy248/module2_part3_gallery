@@ -9,7 +9,7 @@
     "copy:resources": "cp -r backend/public build/backend",
     "copy:pages": "cd backend/ && cp -r ./views ../build/backend",
     "rm-build:backend": "cd backend/ && rm -R build",
-    "rm-build": "npm run rm-build:frontend && npm run rm-build:backend",
+    "rm-build": "npm run rm-build:backend",
     "build:backend": "cd backend && npm run build",
     "build": "chmod 777 build.sh && ./build.sh",
     "start": "npm run build && nodemon build/backend/src/server.js"
