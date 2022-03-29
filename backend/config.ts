@@ -1,6 +1,10 @@
 import path from "path";
 
-const paths = {
-  SRC_PATH: __dirname,
-  ERROR_PAGE_PATH: path.join(SRC_PATH, )
+export const paths = {
+  ERROR_PAGE_PATH: path.join(__dirname, 'views', 'pages', '404.html'),
+  API_IMAGES_PATH: path.join(__dirname, 'public', 'api_images'),
+  LOGS_PATH: 'logs',
+  STATIC_PAGES_PATH: path.join(__dirname, 'views', 'pages'),
+  STATIC_VIEWS_PATH: path.join(__dirname, 'views'),
+  STATIC_PUBLIC_PATH: path.join(__dirname, 'public')
 }
