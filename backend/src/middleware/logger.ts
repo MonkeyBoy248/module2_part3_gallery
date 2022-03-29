@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction, json} from "express";
-import {setDateFormat, writeLogs} from "../utils/log_file";
+import {setDateFormat, writeLogs} from "../utils/log_format";
 
 export class Logger {
   private setRequestBodyFormat = (req: Request) => {
