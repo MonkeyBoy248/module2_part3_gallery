@@ -2,11 +2,13 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "../dist/server.js",
+  "main": "../build/backend/src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node src/server.ts",
-    "build": "tsc && cp -R ./build ../build"
+    "start": "node ../build/backend/src/server.js",
+    "copy-modules": "cp -R node_modules ./build/backend",
+    "build": "tsc && npm run copy-modules && cp -R ./build ../build",
+    "start:backend": "nodemon ../build/backend/src/server.js"
   },
   "devDependencies": {
     "@types/express": "4.17.13",
