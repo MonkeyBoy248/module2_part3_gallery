@@ -32,12 +32,7 @@ export class AuthenticationController implements Controller {
   }
 
   private sendAuthenticationResponse = (req: Request, res: Response, next: NextFunction) => {
-    const userData: User = {
-      email: req.body.email,
-      password: req.body.password,
-    }
-
-    if (!this.isThisCorrectUser(userData)) {
+    if (!this.isThisCorrectUser(req.body)) {
       res.status(200).json(this.authenticationError)
       return;
     }
