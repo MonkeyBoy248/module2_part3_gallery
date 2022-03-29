@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node src/server.ts",
-    "build": "tsc && cp -R ./build/backend ../build"
+    "build": "tsc && cp -R ./build ../build"
   },
   "devDependencies": {
     "@types/express": "4.17.13",
