@@ -3,8 +3,9 @@ node_modules
 .idea/
 build/
 dist/
-backend/views/modules
-backend/views/scripts
+frontend/src/views/modules
+frontend/src/views/scripts
+backend/views
 .editorconfig
 .env
 logs/
