@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
 import { Pictures } from "./gallery_pictures";
-import {setDateFormat, writeLogs} from "./log_file";
+import {setDateFormat, writeLogs} from "./log_format";
 import {isNodeError} from "./error_type_check";
 
 
