@@ -4,6 +4,7 @@ import {setDateFormat, writeLogs} from "../utils/log_format";
 export class Logger {
   private setRequestBodyFormat = (req: Request) => {
     const bodyValuesArray: string[] = [];
+
     for (const [key, value] of Object.entries(req)) {
       bodyValuesArray.push(`${key}: ${value}`)
     }
