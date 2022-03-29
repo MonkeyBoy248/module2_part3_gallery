@@ -5,6 +5,7 @@ import { GalleryController } from "./controllers/gallery_controller";
 import dotenv from 'dotenv';
 import path from "path";
 import { nonexistentPageHandler } from "./middleware/404_handler";
+import { paths } from "../config";
 import { Logger } from "./middleware/logger";
 
 dotenv.config();
@@ -24,9 +25,9 @@ app.use(authenticationController.router);
 app.use(galleryController.router);
 
 app.use('/',
-  express.static(path.join(__dirname, '..', 'views', 'pages')),
-  express.static(path.join(__dirname, '..', 'views')),
-  express.static(path.join(__dirname, '..', 'public')),
+  express.static(paths.STATIC_PAGES_PATH),
+  express.static(paths.STATIC_VIEWS_PATH),
+  express.static(paths.STATIC_PUBLIC_PATH),
 )
 
 app.use(nonexistentPageHandler);

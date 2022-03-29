@@ -1,6 +1,5 @@
 import multer from "multer";
-import path from "path";
-import { Request, Response, NextFunction } from "express";
+import {paths} from "../../config";
 
-export const upload = multer({dest: path.join(__dirname, '..', '..', 'public', 'api_images')});
+export const upload = multer({dest: paths.API_IMAGES_PATH});
 
