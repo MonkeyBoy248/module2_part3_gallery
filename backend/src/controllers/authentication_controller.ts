@@ -1,13 +1,13 @@
 import * as express from 'express';
-import {NextFunction, Request, Response} from "express";
+import {Request, Response} from "express";
 import { Controller } from "../interfaces/controller";
 import { authorized_users } from "../authorized_users_list";
 import { User } from '../interfaces/user';
 import {AuthenticationErrorMessage, TokenObject} from "../interfaces/token_object";
+import {jwtManagement} from "../utils/jwt";
 
 export class AuthenticationController implements Controller {
   public path = '/authentication';
-  private token: TokenObject = {token: 'token'};
   private authenticationError: AuthenticationErrorMessage = {errorMessage: 'forbidden'};
   public router = express.Router();
 
@@ -24,19 +24,18 @@ export class AuthenticationController implements Controller {
       return false;
     }
 
-    if (authorized_users[user.email] !== user.password) {
-      return false;
-    }
-
-    return true;
+    return authorized_users[user.email] === user.password;
   }
 
-  private sendAuthenticationResponse = (req: Request, res: Response, next: NextFunction) => {
+  private sendAuthenticationResponse = async (req: Request, res: Response) => {
     if (!this.isThisCorrectUser(req.body)) {
-      res.status(200).json(this.authenticationError)
+      res.status(401).json(this.authenticationError)
       return;
     }
 
-    res.status(200).json(this.token);
+    const token = await jwtManagement.createToken(req.body.email);
+    const tokenObject: TokenObject = {token};
+
+    res.status(200).json(tokenObject);
   }
 }
