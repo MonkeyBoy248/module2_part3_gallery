@@ -90,6 +90,13 @@ class ImageUploadError extends Error {
   }
 }
 
+class InvalidUserDataError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = 'InvalidUserDataError'
+  }
+}
+
 interface User {
   email: string;
   password: string;
