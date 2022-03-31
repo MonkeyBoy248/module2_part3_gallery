@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from "express";
+import {jwtManagement} from "../utils/jwt";
 
-export function checkAuthorizationHeader (req: Request, res: Response, next: NextFunction) {
-  if (req.headers.authorization !== 'token') {
-    res.sendStatus(403)
-    return;
+export async function checkAuthorizationHeader (req: Request, res: Response, next: NextFunction) {
+  try {
+    await jwtManagement.verifyToken(req.headers.authorization || '');
+    next ();
+  } catch {
+    res.sendStatus(403);
   }
 
-  next();
 }
 

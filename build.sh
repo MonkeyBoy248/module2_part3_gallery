@@ -1,4 +1,4 @@
-npm run build:backend
+npm run build:all
 rm -R build/
 mkdir build/
 mv backend/build/backend build/

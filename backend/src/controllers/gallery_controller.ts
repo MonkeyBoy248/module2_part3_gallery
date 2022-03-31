@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {NextFunction, Request, Response} from "express";
+import { Request, Response } from "express";
 import { Controller } from "../interfaces/controller";
 import { GalleryObject } from "../interfaces/gallery_object";
 import { Pictures } from "../utils/gallery_pictures";
@@ -42,16 +42,11 @@ export class GalleryController implements Controller {
     return response;
   }
 
-  private sendGalleryResponse = async (req: Request, res: Response, next: NextFunction) => {
+  private sendGalleryResponse = async (req: Request, res: Response) => {
     const pictureNames = await Pictures.getPictures();
     const totalPagesAmount = Pictures.countTotalPagesAmount(pictureNames!)
     const pageNumber = req.query.page ? String(req.query.page) : '1';
     const responseObject = this.createGalleryResponseObject(pictureNames!, totalPagesAmount, pageNumber);
-
-    if (req.headers.authorization !== 'token') {
-      res.sendStatus(403);
-      return;
-    }
 
     if (Number(pageNumber) <= 0 || Number(pageNumber) > totalPagesAmount) {
       res.sendStatus(404);
@@ -61,7 +56,7 @@ export class GalleryController implements Controller {
     res.status(200).json(responseObject);
   }
 
-  private uploadUserPicture = async (req: Request, res: Response, next: NextFunction) => {
+  private uploadUserPicture = async (req: Request, res: Response) => {
     await renameFile(req, res);
   }
 }
