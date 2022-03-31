@@ -4,7 +4,7 @@ import { AuthenticationController } from "./controllers/authentication_controlle
 import { GalleryController } from "./controllers/gallery_controller";
 import dotenv from 'dotenv';
 import { nonexistentPageHandler } from "./middleware/404_handler";
-import { paths } from "../config";
+import { paths } from "./config";
 import { Logger } from "./middleware/logger";
 
 dotenv.config();

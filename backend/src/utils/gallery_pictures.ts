@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import {setDateFormat, writeLogs} from "./log_format";
 import {isNodeError} from "./error_type_check";
-import { paths } from "../../config";
+import { paths } from "../config";
 
 export class Pictures {
   public static PICTURES_PER_PAGE: number = 4;
@@ -9,6 +9,7 @@ export class Pictures {
   static async getPictures () {
     try {
       const fileNames = await fs.promises.readdir(paths.API_IMAGES_PATH);
+
       return fileNames;
     } catch (err) {
       const errMessage = isNodeError(err) ? err.code : "File rename failed";
