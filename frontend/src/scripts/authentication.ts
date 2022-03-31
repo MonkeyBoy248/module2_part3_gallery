@@ -1,9 +1,15 @@
+import { CustomEventListener, ListenerRemover } from "../modules/custom_event_listener.js";
+import { authenticationServerUrl } from "../modules/environment_variables.js";
+import { InvalidUserDataError } from "../modules/errors.js";
+import { redirectToTheGalleryPage } from "../modules/gallery_redirection.js";
+import { TokenObject, User } from "../modules/interfaces.js";
+import { Token } from "../modules/token_management.js";
+
 const loginForm = document.forms?.namedItem("login");
 const emailInput = loginForm?.elements.namedItem("email") as HTMLInputElement;
 const passwordInput = loginForm?.elements.namedItem("password") as HTMLInputElement;
 const submitButton = loginForm?.elements.namedItem("submit") as HTMLButtonElement;
 const submitErrorContainer = loginForm?.querySelector('.login-form__submit-error-message');
-const currentPage = currentUrl.searchParams.get('currentPage');
 const authenticationEventsArray: CustomEventListener[] = [
   {target: emailInput, type: 'input', handler: validateEmailInput},
   {target: passwordInput, type: 'change', handler: validatePasswordInput},

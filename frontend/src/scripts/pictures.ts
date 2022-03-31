@@ -1,3 +1,9 @@
+import { CustomEventListener, ListenerRemover } from "../modules/custom_event_listener.js";
+import { Token } from "../modules/token_management.js";
+import { ImageUploadError, InvalidPageError, TokenError } from "../modules/errors.js";
+import { GalleryData } from "../modules/interfaces.js";
+import * as env from "../modules/environment_variables.js";
+
 const galleryPhotos = document.querySelector('.gallery__photos') as HTMLElement;
 const headerFilesContainer = document.querySelector('.header__files-container') as HTMLElement;
 const galleryTemplate = document.querySelector('.gallery__template') as HTMLTemplateElement;
@@ -17,11 +23,7 @@ const galleryEventsArray: CustomEventListener[] = [
   {target: galleryUploadInput, type: 'change', handler: showSelectedFilePath}
 ]
 
-interface GalleryData {
-  objects: string[];
-  page: number;
-  total: number;
-}
+
 
 async function getPicturesData (): Promise<void>{
   const url = setCurrentPageUrl();
@@ -82,7 +84,7 @@ function validateFileType (file: File) {
 }
 
 async function sendUserPicture () {
-  const url = galleryServerUrl;
+  const url = env.galleryServerUrl;
   const tokenObject = Token.getToken();
   const tokenProperty = tokenObject?.token;
   const data = new FormData();
@@ -133,7 +135,7 @@ function redirectToTheTargetPage (e: Event) {
   if (target.getAttribute('error-type') === 'wrong-page-number') {
     window.location.replace('gallery.html?page=1')
   } else {
-    window.location.replace(`index.html?currentPage=${currentUrl.searchParams.get('page')}`);
+    window.location.replace(`index.html?currentPage=${env.currentUrl.searchParams.get('page')}`);
   }
 }
 
@@ -214,7 +216,7 @@ function showSelectedFilePath () {
 }
 
 function setNewUrl (params: URLSearchParams | string): void {
-  window.location.href = `${protocol}://${hostName}:${port}/${galleryUrl}?page=${params}`;
+  window.location.href = `${env.protocol}://${env.hostName}:${env.port}/${env.galleryUrl}?page=${params}`;
 }
 
 function showMessage (text: string): void {
@@ -238,7 +240,7 @@ function redirectWhenTokenExpires (delay: number): void {
     updateMessageBeforeRedirection(delay / 1000);
     ListenerRemover.removeEventListeners(galleryEventsArray);
     setTimeout(() => {
-      window.location.replace(`${loginUrl}?currentPage=${currentUrl.searchParams.get('page')}`);
+      window.location.replace(`${env.loginUrl}?currentPage=${env.currentUrl.searchParams.get('page')}`);
     }, delay)
   }
 }
@@ -253,7 +255,7 @@ function setPageNumber () {
       item.setAttribute('page-number', link.textContent);
     }
     
-    if (item.getAttribute('page-number') === currentUrl.searchParams.get('page')) {
+    if (item.getAttribute('page-number') === env.currentUrl.searchParams.get('page')) {
       currentActiveLink?.classList.remove('active');
       item.classList.add('active');
     }
@@ -261,11 +263,11 @@ function setPageNumber () {
 }
 
 function setCurrentPageUrl (): string {
-  if (!currentUrl.searchParams.get('page')) {
-    return `${galleryServerUrl}?page=1`
+  if (!env.currentUrl.searchParams.get('page')) {
+    return `${env.galleryServerUrl}?page=1`
   }
 
-   return `${galleryServerUrl}?page=${currentUrl.searchParams.get('page')}`;
+   return `${env.galleryServerUrl}?page=${env.currentUrl.searchParams.get('page')}`;
 }
 
 async function changeCurrentPage (e: Event): Promise<void> {

@@ -1,3 +1,7 @@
+import { Token } from "../modules/token_management.js";
+import { redirectToTheGalleryPage } from "../modules/gallery_redirection.js";
+import { currentUrl, loginUrl } from "../modules/environment_variables.js";
+
 const homeLink = document.querySelector('.content__home-link');
 
 homeLink?.addEventListener('click', homeRedirection);
