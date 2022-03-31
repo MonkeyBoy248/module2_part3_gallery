@@ -65,10 +65,6 @@ interface TokenObject {
   timestamp?: number;
 }
 
-interface AuthenticationErrorMessage {
-  errorMessage: string;
-}
-
 class TokenError extends Error {
   constructor (message?: string) {
     super(message);
