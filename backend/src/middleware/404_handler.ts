@@ -1,5 +1,5 @@
 import { Request , Response, NextFunction} from "express";
-import {paths} from "../../config";
+import {paths} from "../config";
 
 
 export function nonexistentPageHandler (req: Request, res: Response, next: NextFunction) {
