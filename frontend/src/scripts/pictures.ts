@@ -10,7 +10,7 @@ const galleryUploadForm = document.querySelector('.header__upload-form') as HTML
 const galleryUploadLabel = galleryUploadForm.querySelector('.header__upload-label') as HTMLElement;
 const galleryUploadInput = galleryUploadForm.querySelector('.header__upload-input') as HTMLInputElement;
 const galleryEventsArray: CustomEventListener[] = [
-  {target: document, type: 'DOMContentLoaded', handler: getCurrentPageImages},
+  {target: document, type: 'DOMContentLoaded', handler: setCurrentPageUrl},
   {target: pagesLinksList, type: 'click', handler: changeCurrentPage},
   {target: galleryErrorContainer, type: 'click', handler: redirectToTheTargetPage},
   {target: galleryUploadForm, type: 'submit', handler: uploadUserFile},
@@ -23,7 +23,8 @@ interface GalleryData {
   total: number;
 }
 
-async function getPicturesData (url: string): Promise<void>{
+async function getPicturesData (): Promise<void>{
+  const url = setCurrentPageUrl();
   const tokenObject = Token.getToken();
   const tokenProperty = tokenObject?.token;
 
@@ -51,6 +52,7 @@ async function getPicturesData (url: string): Promise<void>{
       createPictureTemplate(data);
       createLinksTemplate(data.total);
       setPageNumber();
+      checkTokenValidity();
     } catch (err){
         if (err instanceof InvalidPageError) {
           const nonexistentPageNumber = url.slice(url.indexOf('=') + 1);
@@ -76,14 +78,11 @@ async function getPicturesData (url: string): Promise<void>{
 function validateFileType (file: File) {
   const fileTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
-  if (!fileTypes.includes(file.type)) {
-    return false;
-  }
-
-  return true;
+  return fileTypes.includes(file.type);
 }
 
-async function sendUserPicture (url: string) {
+async function sendUserPicture () {
+  const url = galleryServerUrl;
   const tokenObject = Token.getToken();
   const tokenProperty = tokenObject?.token;
   const data = new FormData();
@@ -95,7 +94,6 @@ async function sendUserPicture (url: string) {
   }
 
   data.append('file', file);
-  console.log('data to fetch', data.getAll('file'));
 
   try {
     const response = await fetch(url, {
@@ -113,10 +111,17 @@ async function sendUserPicture (url: string) {
       throw new ImageUploadError();
     }
 
-    await getPicturesData(`${galleryServerUrl}?page=${currentUrl.searchParams.get('page')}`);
+    await getPicturesData();
   } catch (err) {
     console.log('Failed');
   }
+}
+
+function checkTokenValidity () {
+  setInterval(() => {
+    Token.deleteToken();
+    redirectWhenTokenExpires(5000);
+  }, 60000)
 }
 
 function redirectToTheTargetPage (e: Event) {
@@ -177,19 +182,18 @@ function createErrorMessageTemplate (message: string, errType: string, targetPag
 async function uploadUserFile (e: Event) {
   e.preventDefault();
   const selectedFiles = galleryUploadInput.files;
-  const file = galleryUploadInput.files![0];
 
   if (selectedFiles!.length === 0) {
     galleryUploadLabel.textContent = 'No file selected';
     return false;
   }
 
-  await sendUserPicture(galleryServerUrl);
+  await sendUserPicture();
 
   headerFilesContainer.innerHTML = '';
 }
 
-function showSelectedFilePath (e: Event) {
+function showSelectedFilePath () {
   const selectedFiles = galleryUploadInput.files;
 
   if (selectedFiles) {
@@ -206,7 +210,7 @@ function showSelectedFilePath (e: Event) {
 
         headerFilesContainer.append(listItem);
       }
-    }
+  }
 }
 
 function setNewUrl (params: URLSearchParams | string): void {
@@ -228,6 +232,8 @@ function updateMessageBeforeRedirection (timer: number): void {
 }
 
 function redirectWhenTokenExpires (delay: number): void {
+  console.log('You\'re in redirect timer');
+
   if (!Token.getToken()) {
     updateMessageBeforeRedirection(delay / 1000);
     ListenerRemover.removeEventListeners(galleryEventsArray);
@@ -254,17 +260,15 @@ function setPageNumber () {
   }
 }
 
-function getCurrentPageImages (): void {
+function setCurrentPageUrl (): string {
   if (!currentUrl.searchParams.get('page')) {
-    getPicturesData(`${galleryServerUrl}?page=1`)
-  } else {
-    getPicturesData(`${galleryServerUrl}?page=${currentUrl.searchParams.get('page')}`);
+    return `${galleryServerUrl}?page=1`
   }
 
-  redirectWhenTokenExpires(5000);
+   return `${galleryServerUrl}?page=${currentUrl.searchParams.get('page')}`;
 }
 
-function changeCurrentPage (e: Event): void {
+async function changeCurrentPage (e: Event): Promise<void> {
   const currentActiveLink = pagesLinksList.querySelector('.active');
   const target = e.target as HTMLElement;
   const targetClosestLi = target.closest('li');
@@ -274,26 +278,21 @@ function changeCurrentPage (e: Event): void {
   if (target !== pagesLinksList ) {
     if (currentActiveLink !== targetClosestLi) {
       setNewUrl(targetClosestLi?.getAttribute('page-number')!);
-      getPicturesData(`${galleryServerUrl}?page=${currentUrl.searchParams.get('page')}`);
+      await getPicturesData();
       
       currentActiveLink?.classList.remove('active');
       target.classList.add('active');
-  
-      redirectWhenTokenExpires(5000);
     }
   }
 }
 
-document.addEventListener('DOMContentLoaded', getCurrentPageImages);
+document.addEventListener('DOMContentLoaded', getPicturesData);
 pagesLinksList.addEventListener('click', changeCurrentPage);
 galleryErrorContainer.addEventListener('click', redirectToTheTargetPage);
 galleryUploadForm.addEventListener('submit', uploadUserFile);
 galleryUploadInput.addEventListener('change', showSelectedFilePath);
 
-setInterval(() => {
-  Token.deleteToken();
-  redirectWhenTokenExpires(5000);
-}, 60000)
+
 
 
 

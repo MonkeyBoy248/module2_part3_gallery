@@ -31,7 +31,8 @@ function showErrorMessage(text: string, targetElement: HTMLElement, field: HTMLI
   field.classList.add('invalid');
 }
 
-async function sendFormData(url: string) {
+async function sendFormData() {
+  const url = authenticationServerUrl;
   const user: User = {
     email: emailInput.value,
     password: passwordInput.value,
@@ -71,7 +72,7 @@ function validatePasswordInput(): void {
 async function submitForm(e: Event) {
   e.preventDefault();
   try {
-    const response = await sendFormData(authenticationServerUrl);
+    const response = await sendFormData();
 
     Token.setToken(response)
 
