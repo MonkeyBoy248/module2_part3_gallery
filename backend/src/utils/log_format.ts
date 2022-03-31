@@ -21,8 +21,8 @@ function openNewFileStream (data: string) {
 
 export async function writeLogs (log: string) {
   try {
-    if (!fs.existsSync('logs')) {
-      await fs.promises.mkdir('logs');
+    if (!fs.existsSync(paths.LOGS_PATH)) {
+      await fs.promises.mkdir(paths.LOGS_PATH);
     }
 
     openNewFileStream(log);
